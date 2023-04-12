@@ -37,7 +37,7 @@ public class FilmControllerTest {
     public void checking200SizeDescription() {
         Set<ConstraintViolation<Film>> violationSet = validator.validate(film);
         assertFalse(violationSet.isEmpty());
-        assertEquals(violationSet.iterator().next().getMessage(), "размер должен находиться в диапазоне от 0 до 200");
+        assertEquals(violationSet.iterator().next().getMessage(), "size must be between 0 and 200");
     }
 
     @Test
@@ -46,7 +46,7 @@ public class FilmControllerTest {
         film.setDescription("Фильм");
         Set<ConstraintViolation<Film>> violationSet = validator.validate(film);
         assertFalse(violationSet.isEmpty());
-        assertEquals(violationSet.iterator().next().getMessage(), "не должно равняться null");
+        assertEquals(violationSet.iterator().next().getMessage(), "must not be null");
     }
 
     @Test
@@ -55,7 +55,7 @@ public class FilmControllerTest {
         film.setDescription("Фильм");
         Set<ConstraintViolation<Film>> violationSet = validator.validate(film);
         assertFalse(violationSet.isEmpty());
-        assertEquals(violationSet.iterator().next().getMessage(), "не должно равняться null");
+        assertEquals(violationSet.iterator().next().getMessage(), "must not be null");
     }
 
     @Test
@@ -64,7 +64,7 @@ public class FilmControllerTest {
         film.setDescription("Фильм");
         Set<ConstraintViolation<Film>> violationSet = validator.validate(film);
         assertFalse(violationSet.isEmpty());
-        assertEquals(violationSet.iterator().next().getMessage(), "должно быть больше 0");
+        assertEquals(violationSet.iterator().next().getMessage(), "must be greater than 0");
     }
 
     @Test

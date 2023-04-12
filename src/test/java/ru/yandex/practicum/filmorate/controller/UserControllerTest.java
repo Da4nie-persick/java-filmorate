@@ -33,7 +33,7 @@ public class UserControllerTest {
         user.setEmail("dasha141099.gmail.com");
         Set<ConstraintViolation<User>> violationSet = validator.validate(user);
         assertFalse(violationSet.isEmpty());
-        assertEquals(violationSet.iterator().next().getMessage(), "должно иметь формат адреса электронной почты");
+        assertEquals(violationSet.iterator().next().getMessage(), "must be a well-formed email address");
     }
 
     @Test
@@ -41,7 +41,7 @@ public class UserControllerTest {
         user.setLogin("");
         Set<ConstraintViolation<User>> violationSet = validator.validate(user);
         assertFalse(violationSet.isEmpty());
-        assertEquals(violationSet.iterator().next().getMessage(), "не должно быть пустым");
+        assertEquals(violationSet.iterator().next().getMessage(), "must not be blank");
     }
 
     @Test
@@ -55,7 +55,7 @@ public class UserControllerTest {
         user.setBirthday(LocalDate.of(2028, 10, 14));
         Set<ConstraintViolation<User>> violationSet = validator.validate(user);
         assertFalse(violationSet.isEmpty());
-        assertEquals(violationSet.iterator().next().getMessage(), "должно содержать прошедшую дату");
+        assertEquals(violationSet.iterator().next().getMessage(), "must be a past date");
     }
 
     @Test
