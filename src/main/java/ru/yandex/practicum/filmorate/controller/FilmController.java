@@ -14,13 +14,13 @@ import java.util.*;
 @RequestMapping("/films")
 public class FilmController {
     private final Map<Integer, Film> films = new HashMap<>();
-    int id = 0;
+    private int id = 0;
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
         validate(film);
-        log.debug("Фильм успешно добавлен");
-        film = new Film(generator(), film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration());
+        log.debug("Фильм успешно добавлен: {}", film);
+        film.setId(generator());
         films.put(film.getId(), film);
         return film;
     }
@@ -29,7 +29,7 @@ public class FilmController {
     public Film update(@Valid @RequestBody Film film) {
         if (films.containsKey(film.getId())) {
             films.put(film.getId(), film);
-            log.debug("Фильм успешно обновлен");
+            log.debug("Фильм успешно обновлен: {}", film);
             return film;
         } else {
             log.debug("Такого фильма нет");
@@ -43,7 +43,7 @@ public class FilmController {
         return films.values();
     }
 
-    private void validate(Film film) {
+    public void validate(Film film) {
         if (film.getName().isBlank() || film.getName() == null) {
             log.warn("Передана пустая строка");
             throw new ValidationException("Название не может быть пустым");
@@ -63,7 +63,6 @@ public class FilmController {
     }
 
     public int generator() {
-        id++;
-        return id;
+        return ++id;
     }
 }

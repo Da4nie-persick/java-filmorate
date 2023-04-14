@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.ConstraintViolation;
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserControllerTest {
     User user;
     Validator validator;
+    UserController userController = new UserController();
 
     @BeforeEach
     public void setUp() {
@@ -62,6 +64,42 @@ public class UserControllerTest {
     public void checkingAllRight() {
         Set<ConstraintViolation<User>> violationSet = validator.validate(user);
         assertTrue(violationSet.isEmpty());
+    }
+
+    @Test
+    public void validateCheckingInvalidEmail() {
+        user.setEmail("gshjla!/.com");
+        Throwable exception = assertThrows(ValidationException.class, () -> {
+                    userController.validate(user);
+                }
+        );
+        assertEquals("Электронная почта не может быть пустой и должна содержать символ @", exception.getMessage());
+    }
+
+    @Test
+    public void validateCheckingNullLogin() {
+        user.setLogin(null);
+        Throwable exception = assertThrows(ValidationException.class, () -> {
+                    userController.validate(user);
+                }
+        );
+        assertEquals("Логин не может быть пустым и содержать пробелы", exception.getMessage());
+    }
+
+    @Test
+    public void validateCheckingInvalidBirthday() {
+        user.setBirthday(LocalDate.of(29878, 10, 19));
+        Throwable exception = assertThrows(ValidationException.class, () -> {
+                    userController.validate(user);
+                }
+        );
+        assertEquals("Дата рождения не может быть в будущем", exception.getMessage());
+    }
+
+    @Test
+    public void validateCheckingAllRight() {
+        userController.validate(user);
+        assertEquals("Dasha", user.getName());
     }
 }
 

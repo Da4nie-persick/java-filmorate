@@ -14,13 +14,13 @@ import java.util.*;
 @RequestMapping("/users")
 public class UserController {
     private final Map<Integer, User> users = new HashMap<>();
-    int id = 0;
+    private int id = 0;
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
         validate(user);
-        log.debug("Пользователь успешно создан");
-        user = new User(generator(), user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
+        log.debug("Пользователь успешно создан: {}", user);
+        user.setId(generator());
         users.put(user.getId(), user);
         return user;
     }
@@ -28,7 +28,7 @@ public class UserController {
     @PutMapping
     public User update(@Valid @RequestBody User user) {
         if (users.containsKey(user.getId())) {
-            log.debug("Пользователь обновлен");
+            log.debug("Пользователь обновлен: {}", user);
             users.put(user.getId(), user);
             return user;
         } else {
@@ -43,8 +43,8 @@ public class UserController {
         return users.values();
     }
 
-    private void validate(User user) {
-        if (user.getEmail() == null || (user.getEmail().indexOf("@") < 0)) {
+    public void validate(User user) {
+        if (user.getEmail() == null || !user.getEmail().contains("@")) {
             log.warn("Переданы не верные данные о почте");
             throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
         }
@@ -59,7 +59,6 @@ public class UserController {
     }
 
     public int generator() {
-        id++;
-        return id;
+        return ++id;
     }
 }
