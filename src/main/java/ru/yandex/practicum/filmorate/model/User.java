@@ -21,19 +21,12 @@ public class User {
     private String name;
     @Past
     private LocalDate birthday;
-    private Set<Integer> friends;
+    private final Set<Integer> friends = new HashSet<>();
 
     public String getName() {
         if (name == null || name.isBlank()) {
             return login;
         }
         return name;
-    }
-
-    public Set<Integer> getFriends() {
-        if (friends == null) {
-            setFriends(new HashSet<>());
-        }
-        return friends;
     }
 }

@@ -52,7 +52,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         return films.get(id);
     }
 
-    public void validate(Film film) { //не сделала приватным потому что этот метод нужен в тестах
+    public void validate(Film film) { 
         if (film.getName().isBlank() || film.getName() == null) {
             log.warn("Передана пустая строка");
             throw new ValidationException("Название не может быть пустым");
