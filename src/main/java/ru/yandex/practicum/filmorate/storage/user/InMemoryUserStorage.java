@@ -46,9 +46,10 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User getUserId(Integer id) {
-        return users.entrySet().stream()
-                .filter(u -> id.equals(u.getKey())).map(Map.Entry::getValue).findFirst()
-                .orElseThrow(() -> new ObjectNotFoundException("id пользователя не найдено"));
+        if (users.get(id) == null) {
+            throw new ObjectNotFoundException("id пользователя не найдено");
+        }
+        return users.get(id);
     }
 
     public void validate(User user) {
@@ -66,7 +67,7 @@ public class InMemoryUserStorage implements UserStorage {
         }
     }
 
-    public int generator() {
+    private int generator() {
         return ++id;
     }
 }

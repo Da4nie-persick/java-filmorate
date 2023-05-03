@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -23,43 +22,24 @@ public class FilmService {
         this.userStorage = userStorage;
     }
 
-    public Film putLike(Integer filmId, Integer userId) {
-        if (userStorage.getUserId(userId) == null) {
-            log.warn("Передан неверный id пользователя");
-            throw new ObjectNotFoundException("Пользователя с таким id нет");
-        }
+    public void putLike(Integer filmId, Integer userId) {
+        userStorage.getUserId(userId);
         Film film = getFilmId(filmId);
-        if (film.getLikes() == null) {
-            film.setLikes(new HashSet<>());
-        }
         log.debug("Поставлен лайк на фильм: {}", film);
         film.getLikes().add(userId);
-        update(film);
-        return getFilmId(filmId);
     }
 
-    public Film deleteLike(Integer filmId, Integer userId) {
-        if (userStorage.getUserId(userId) == null) {
-            log.warn("Передан неверный id пользователя");
-            throw new ObjectNotFoundException("Пользователя с таким id нет");
-        }
+    public void deleteLike(Integer filmId, Integer userId) {
+        userStorage.getUserId(userId);
         Film film = getFilmId(filmId);
         log.debug("Удален лайк на фильм: {}", film);
         film.getLikes().remove(userId);
-        update(film);
-        return getFilmId(filmId);
     }
 
     public List<Film> getPopularFilms(Integer count) {
         log.debug("Текущее количество фильмов в топе: {}", count);
-        return allFilms().stream().sorted(Comparator.comparingInt((Film film) -> {
-                            if (film.getLikes() == null) {
-                                film.setLikes(new HashSet<>());
-                            }
-                            return film.getLikes().size();
-                        }
-                ).reversed())
-                .limit(count).collect(Collectors.toList());
+        return allFilms().stream().sorted(Comparator.comparingInt((Film film) -> film.getLikes().size())
+                .reversed()).limit(count).collect(Collectors.toList());
     }
 
     public Film create(Film film) {

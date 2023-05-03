@@ -46,12 +46,13 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film getFilmId(Integer id) {
-        return films.entrySet().stream()
-                .filter(f -> id.equals(f.getKey())).map(Map.Entry::getValue).findFirst()
-                .orElseThrow(() -> new ObjectNotFoundException("id пользователя не найдено"));
+        if (films.get(id) == null) {
+            throw new ObjectNotFoundException("id пользователя не найдено");
+        }
+        return films.get(id);
     }
 
-    public void validate(Film film) {
+    public void validate(Film film) { //не сделала приватным потому что этот метод нужен в тестах
         if (film.getName().isBlank() || film.getName() == null) {
             log.warn("Передана пустая строка");
             throw new ValidationException("Название не может быть пустым");
@@ -70,7 +71,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
     }
 
-    public int generator() {
+    private int generator() {
         return ++id;
     }
 }

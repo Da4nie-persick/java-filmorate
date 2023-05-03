@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
 import javax.validation.Valid;
 import java.util.*;
@@ -13,28 +12,26 @@ import java.util.*;
 @RequestMapping("/users")
 public class UserController {
 
-    private final InMemoryUserStorage memoryUserStorage;
     private final UserService userService;
 
     @Autowired
-    public UserController(InMemoryUserStorage memoryUserStorage, UserService userService) {
-        this.memoryUserStorage = memoryUserStorage;
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
-        return memoryUserStorage.create(user);
+        return userService.create(user);
     }
 
     @PutMapping
     public User update(@Valid @RequestBody User user) {
-        return memoryUserStorage.update(user);
+        return userService.update(user);
     }
 
     @GetMapping
     public Collection<User> allUsers() {
-        return memoryUserStorage.allUsers();
+        return userService.allUsers();
     }
 
     @GetMapping("/{id}")
@@ -43,13 +40,13 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public User addToFriends(@PathVariable("id") Integer id, @PathVariable("friendId") Integer friendId) {
-        return userService.addToFriends(id, friendId);
+    public void addToFriends(@PathVariable("id") Integer id, @PathVariable("friendId") Integer friendId) {
+        userService.addToFriends(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public User deleteFriends(@PathVariable("id") Integer id, @PathVariable("friendId") Integer friendId) {
-        return userService.deleteFriends(id, friendId);
+    public void deleteFriends(@PathVariable("id") Integer id, @PathVariable("friendId") Integer friendId) {
+        userService.deleteFriends(id, friendId);
     }
 
     @GetMapping("/{id}/friends")
