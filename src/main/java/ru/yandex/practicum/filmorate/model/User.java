@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,6 +13,7 @@ import java.util.Set;
 
 @Data
 @Builder
+@AllArgsConstructor
 public class User {
     private int id;
     @Email

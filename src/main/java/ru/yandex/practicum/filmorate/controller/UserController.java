@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
@@ -9,9 +10,8 @@ import javax.validation.Valid;
 import java.util.*;
 
 @RestController
-@RequestMapping("/users")
+@Slf4j
 public class UserController {
-
     private final UserService userService;
 
     @Autowired
@@ -19,42 +19,42 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping
+    @PostMapping("/users")
     public User create(@Valid @RequestBody User user) {
         return userService.create(user);
     }
 
-    @PutMapping
+    @PutMapping("/users")
     public User update(@Valid @RequestBody User user) {
         return userService.update(user);
     }
 
-    @GetMapping
+    @GetMapping("/users")
     public Collection<User> allUsers() {
         return userService.allUsers();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/users/{id}")
     public User getUserId(@PathVariable Integer id) {
         return userService.getUserId(id);
     }
 
-    @PutMapping("/{id}/friends/{friendId}")
+    @PutMapping("/users/{id}/friends/{friendId}")
     public void addToFriends(@PathVariable Integer id, @PathVariable Integer friendId) {
         userService.addToFriends(id, friendId);
     }
 
-    @DeleteMapping("/{id}/friends/{friendId}")
+    @DeleteMapping("/users/{id}/friends/{friendId}")
     public void deleteFriends(@PathVariable Integer id, @PathVariable Integer friendId) {
         userService.deleteFriends(id, friendId);
     }
 
-    @GetMapping("/{id}/friends")
+    @GetMapping("/users/{id}/friends")
     public List<User> getMyFriends(@PathVariable Integer id) {
         return userService.getMyFriends(id);
     }
 
-    @GetMapping("/{id}/friends/common/{otherId}")
+    @GetMapping("/users/{id}/friends/common/{otherId}")
     public List<User> mutualFriends(@PathVariable Integer id, @PathVariable Integer otherId) {
         return userService.mutualFriends(id, otherId);
     }

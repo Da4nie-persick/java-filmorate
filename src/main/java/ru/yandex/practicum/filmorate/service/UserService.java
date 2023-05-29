@@ -2,8 +2,10 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.user.FriendDbStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.*;
@@ -12,51 +14,52 @@ import java.util.*;
 @Service
 public class UserService {
     private final UserStorage userStorage;
+    private final FriendDbStorage friendDbStorage;
 
     @Autowired
-    public UserService(UserStorage userStorage) {
+    public UserService(@Qualifier("userDbStorage") UserStorage userStorage, FriendDbStorage friendDbStorage) {
         this.userStorage = userStorage;
+        this.friendDbStorage = friendDbStorage;
     }
 
     public void addToFriends(Integer id, Integer friendId) {
-        User user = getUserId(id);
-        User friend = getUserId(friendId);
+        User user = userStorage.getUserId(id);
+        User friend = userStorage.getUserId(friendId);
         log.debug("Пользователь {}, добавил в друзья {}", user, friend);
-        user.getFriends().add(friendId);
-        friend.getFriends().add(id);
+        friendDbStorage.addToFriends(id, friendId);
     }
 
     public void deleteFriends(Integer id, Integer friendId) {
-        User user = getUserId(id);
-        User friend = getUserId(friendId);
+        User user = userStorage.getUserId(id);
+        User friend = userStorage.getUserId(friendId);
         log.debug("Пользователь {}, удалил из друзей {}", user, friend);
-        user.getFriends().remove(friendId);
-        friend.getFriends().remove(id);
+        friendDbStorage.deleteFriends(id, friendId);
     }
 
     public List<User> mutualFriends(Integer id, Integer otherId) {
-        User user = getUserId(id);
-        User other = getUserId(otherId);
+        User user = userStorage.getUserId(id);
+        User other = userStorage.getUserId(otherId);
         if (user.getFriends() == null) {
             return new ArrayList<>();
         }
-        Set<Integer> mutualFriendsHash = new HashSet<>(user.getFriends());
-        mutualFriendsHash.retainAll(other.getFriends());
-        List<User> mutualFriendsList = new ArrayList<>();
+        Set<User> mutualFriendsHash = new HashSet<>(friendDbStorage.getFriends(id));
+        mutualFriendsHash.retainAll(friendDbStorage.getFriends(otherId));
+       /* List<User> mutualFriendsList = new ArrayList<>();
         for (Integer userId : mutualFriendsHash) {
-            mutualFriendsList.add(getUserId(userId));
+            mutualFriendsList.add(userStorage.getUserId(userId));
         }
-        log.debug("Количество общих друзей {} и {} : {}", user, other, mutualFriendsList.size());
-        return mutualFriendsList;
+        log.debug("Количество общих друзей {} и {} : {}", user, other, mutualFriendsList.size());*/
+        return new ArrayList<User>(mutualFriendsHash);
     }
 
     public List<User> getMyFriends(Integer id) {
-        User user = getUserId(id);
-        List<User> myFriendsList = new ArrayList<>();
-        for (Integer userId : user.getFriends()) {
-            myFriendsList.add(getUserId(userId));
+        User user = userStorage.getUserId(id);
+        List<User> myFriendsList;
+        /*for (Integer userId : user.getFriends()) {
+            myFriendsList.add(userStorage.getUserId(userId));
         }
-        log.debug("Количество друзей {} : {}", user, myFriendsList.size());
+        log.debug("Количество друзей {} : {}", user, myFriendsList.size());*/
+        myFriendsList = friendDbStorage.getFriends(id);
         return myFriendsList;
     }
 
