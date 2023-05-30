@@ -15,7 +15,7 @@ public class GenreDbStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public GenreDbStorage(JdbcTemplate jdbcTemplate){
+    public GenreDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -47,7 +47,6 @@ public class GenreDbStorage {
                 "join genre as g on gf.genre_id = g.genre_id " +
                 "where film_id = ?";
         return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> new Genre(rs.getInt("genre_id"),
-                rs.getString("genre_name")),id);
+                rs.getString("genre_name")), id);
     }
 }
-
