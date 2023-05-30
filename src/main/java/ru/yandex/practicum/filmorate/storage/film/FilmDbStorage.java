@@ -55,13 +55,13 @@ public class FilmDbStorage implements FilmStorage {
         String sqlQuery = "update films set " +
                 "name = ?, description = ?, release_date = ? , duration = ?, mpa_id = ?" +
                 "where film_id = ?";
-        int updateFilm = jdbcTemplate.update(sqlQuery
-                , film.getName()
-                , film.getDescription()
-                , film.getReleaseDate()
-                , film.getDuration()
-                , film.getMpa().getId()
-                , film.getId());
+        int updateFilm = jdbcTemplate.update(sqlQuery,
+                film.getName(),
+                film.getDescription(),
+                film.getReleaseDate(),
+                film.getDuration(),
+                film.getMpa().getId(),
+                film.getId());
         if (film.getGenres() != null) {
             jdbcTemplate.update("delete from genre_film where film_id = ?", film.getId());
             for (Genre genre : film.getGenres()) {
