@@ -17,6 +17,7 @@ target/
 *.iws
 *.iml
 *.ipr
+*.db
 
 ### NetBeans ###
 /nbproject/private/
@@ -30,6 +31,3 @@ build/
 
 ### VS Code ###
 .vscode/
-
-*.db
-db/*
