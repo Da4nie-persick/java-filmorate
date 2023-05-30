@@ -23,8 +23,8 @@ public class MpaDbStorage {
         return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> new Mpa(rs.getInt("mpa_id"), rs.getString("mpa_name")));
     }
 
-    public Mpa getMpaId(Integer id){
-        if(id == null) {
+    public Mpa getMpaId(Integer id) {
+        if (id == null) {
             throw new ObjectNotFoundException("Передан пустой id рейтинга");
         }
         Mpa mpa;
@@ -38,4 +38,3 @@ public class MpaDbStorage {
         return mpa;
     }
 }
-
