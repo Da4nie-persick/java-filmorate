@@ -16,7 +16,7 @@ public class LikeDbStorage {
     private MpaService mpaService;
 
     @Autowired
-    public LikeDbStorage(JdbcTemplate jdbcTemplate, MpaService mpaService){
+    public LikeDbStorage(JdbcTemplate jdbcTemplate, MpaService mpaService) {
         this.jdbcTemplate = jdbcTemplate;
         this.mpaService = mpaService;
     }
