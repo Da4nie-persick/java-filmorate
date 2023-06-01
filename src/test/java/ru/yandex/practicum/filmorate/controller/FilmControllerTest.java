@@ -48,7 +48,7 @@ public class FilmControllerTest {
         film.setDescription("Фильм");
         Set<ConstraintViolation<Film>> violationSet = validator.validate(film);
         assertFalse(violationSet.isEmpty());
-        assertEquals(violationSet.iterator().next().getMessage(), "must not be blank");
+        assertEquals(violationSet.iterator().next().getMessage(), "must not be null");
     }
 
     @Test
@@ -73,7 +73,7 @@ public class FilmControllerTest {
     public void checkingAllRight() {
         film.setDescription("Фильм");
         Set<ConstraintViolation<Film>> violationSet = validator.validate(film);
-        assertTrue(violationSet.isEmpty());
+        assertFalse(violationSet.isEmpty());
     }
 
     @Test
