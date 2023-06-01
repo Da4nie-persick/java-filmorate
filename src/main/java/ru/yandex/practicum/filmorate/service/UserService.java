@@ -23,35 +23,32 @@ public class UserService {
     }
 
     public void addToFriends(Integer id, Integer friendId) {
-        User user = userStorage.getUserId(id);
-        User friend = userStorage.getUserId(friendId);
+        Optional<User> user = userStorage.getUserId(id);
+        Optional<User> friend = userStorage.getUserId(friendId);
         log.debug("Пользователь {}, добавил в друзья {}", user, friend);
         friendDbStorage.addToFriends(id, friendId);
     }
 
     public void deleteFriends(Integer id, Integer friendId) {
-        User user = userStorage.getUserId(id);
-        User friend = userStorage.getUserId(friendId);
+        Optional<User> user = userStorage.getUserId(id);
+        Optional<User> friend = userStorage.getUserId(friendId);
         log.debug("Пользователь {}, удалил из друзей {}", user, friend);
         friendDbStorage.deleteFriends(id, friendId);
     }
 
     public List<User> mutualFriends(Integer id, Integer otherId) {
-        User user = userStorage.getUserId(id);
-        User other = userStorage.getUserId(otherId);
-        if (user.getFriends() == null) {
+        Optional<User> user = userStorage.getUserId(id);
+        userStorage.getUserId(otherId);
+        if (user.get().getFriends() == null) {
             return new ArrayList<>();
         }
-        Set<User> mutualFriendsHash = new HashSet<>(friendDbStorage.getFriends(id));
-        mutualFriendsHash.retainAll(friendDbStorage.getFriends(otherId));
-        return new ArrayList<User>(mutualFriendsHash);
+        List<User> mutualFriends = friendDbStorage.mutualFriends(id, otherId);
+        return mutualFriends;
     }
 
     public List<User> getMyFriends(Integer id) {
-        User user = userStorage.getUserId(id);
-        List<User> myFriendsList;
-        myFriendsList = friendDbStorage.getFriends(id);
-        return myFriendsList;
+        userStorage.getUserId(id);
+        return new ArrayList<>(friendDbStorage.getFriends(id));
     }
 
     public User create(User user) {
@@ -66,7 +63,7 @@ public class UserService {
         return userStorage.allUsers();
     }
 
-    public User getUserId(Integer id) {
+    public Optional<User> getUserId(Integer id) {
         return userStorage.getUserId(id);
     }
 }

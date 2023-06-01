@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.additions.GenreDbStorage;
 
@@ -24,14 +23,6 @@ public class GenreService {
 
     public Genre getGenreId(Integer id) {
         return genreDbStorage.getGenreId(id);
-    }
-
-    public void addGenre(Film film) {
-        genreDbStorage.addGenre(film);
-    }
-
-    public LinkedHashSet<Genre> getGenreFilm(Integer id) {
-        return new LinkedHashSet<>(genreDbStorage.getGenreFilm(id));
     }
 }
 

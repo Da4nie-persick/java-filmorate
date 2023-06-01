@@ -43,10 +43,11 @@ public class UserDbStorage implements UserStorage {
                 user.getName(),
                 user.getBirthday(),
                 user.getId());
-        if (updateUser == 1)
+        if (updateUser == 1) {
             return user;
-        else
+        } else {
             throw new ObjectNotFoundException("Проверьте данные");
+        }
     }
 
     @Override
@@ -56,12 +57,12 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User getUserId(Integer id) {
+    public Optional<User> getUserId(Integer id) {
         String sqlQuery = "select * from users " +
                 "where user_id = ?";
         SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sqlQuery, id);
         if (sqlRowSet.next()) {
-            return toUser(sqlRowSet);
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUsers, id));
         } else {
             throw new ObjectNotFoundException("Пользователь не найден!");
         }
@@ -83,16 +84,6 @@ public class UserDbStorage implements UserStorage {
                 .login(resultSet.getString("login"))
                 .name(resultSet.getString("name"))
                 .birthday(resultSet.getDate("birthday").toLocalDate())
-                .build();
-    }
-
-    private User toUser(SqlRowSet sqlRowSet) {
-        return User.builder()
-                .id(sqlRowSet.getInt("user_id"))
-                .email(sqlRowSet.getString("email"))
-                .login(sqlRowSet.getString("login"))
-                .name(sqlRowSet.getString("name"))
-                .birthday(sqlRowSet.getDate("birthday").toLocalDate())
                 .build();
     }
 }
