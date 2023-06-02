@@ -55,9 +55,8 @@ public class FilmDbStorage implements FilmStorage {
         addGenre(film);
         if (updateFilm == 1) {
             return film;
-        } else {
-            throw new ObjectNotFoundException("Проверьте данные");
         }
+        throw new ObjectNotFoundException("Проверьте данные");
     }
 
     @Override
@@ -67,16 +66,14 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Optional<Film> getFilmId(Integer id) {
+    public Film getFilmId(Integer id) {
         String sqlQuery = "select * from films join mpa on films.mpa_id = mpa.mpa_id where film_id = ?";
-        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sqlQuery, id);
-        if (sqlRowSet.next()) {
-            Film film = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToFilms, id);
-            uploadingGenres(Collections.singletonList(film));
-            return Optional.ofNullable(film);
-        } else {
-            throw new ObjectNotFoundException("Фильм не найден");
+        List<Film> film = jdbcTemplate.query(sqlQuery, this::mapRowToFilms, id);
+        if (film.size() == 1) {
+            uploadingGenres(film);
+            return film.get(0);
         }
+        throw new ObjectNotFoundException("Фильм не найден");
     }
 
     public Map<String, Object> toMap(Film film) {
@@ -89,7 +86,7 @@ public class FilmDbStorage implements FilmStorage {
         return values;
     }
 
-    public Film mapRowToFilms(ResultSet resultSet, int rowNum) throws SQLException {
+    private Film mapRowToFilms(ResultSet resultSet, int rowNum) throws SQLException {
         return Film.builder()
                 .id(resultSet.getInt("film_id"))
                 .name(resultSet.getString("name"))

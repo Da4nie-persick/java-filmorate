@@ -83,7 +83,7 @@ class FilmorateApplicationTests {
     @Test
     public void testFindUserById() {
         user1 = userService.create(user1);
-        Optional<User> userOptional = userService.getUserId(user1.getId());
+        Optional<User> userOptional = Optional.ofNullable(userService.getUserId(user1.getId()));
 
         assertThat(userOptional)
                 .isPresent()
@@ -158,7 +158,7 @@ class FilmorateApplicationTests {
     @Test
     public void testFindFilmById() {
         film1 = filmService.create(film1);
-        Optional<Film> filmOptional = filmService.getFilmId(film1.getId());
+        Optional<Film> filmOptional = Optional.ofNullable(filmService.getFilmId(film1.getId()));
 
         assertThat(filmOptional)
                 .isPresent()
@@ -186,8 +186,8 @@ class FilmorateApplicationTests {
         film1 = filmService.create(film1);
         user3 = userService.create(user3);
         filmService.putLike(film1.getId(), user3.getId());
-        Optional<Film> film = filmService.getFilmId(film1.getId());
-        assertThat(film.get().getLikes().contains(user3.getId()));
+        Film film = filmService.getFilmId(film1.getId());
+        assertThat(film.getLikes().contains(user3.getId()));
     }
 
     @Test
@@ -195,11 +195,11 @@ class FilmorateApplicationTests {
         film1 = filmService.create(film1);
         user3 = userService.create(user3);
         filmService.putLike(film1.getId(), user3.getId());
-        Optional<Film> film = filmService.getFilmId(film1.getId());
-        assertThat(film.get().getLikes().contains(user3.getId()));
+        Film film = filmService.getFilmId(film1.getId());
+        assertThat(film.getLikes().contains(user3.getId()));
         filmService.deleteLike(film1.getId(), user3.getId());
         film = filmService.getFilmId(film1.getId());
-        assertThat(film.get().getLikes().isEmpty());
+        assertThat(film.getLikes().isEmpty());
     }
 
     @Test

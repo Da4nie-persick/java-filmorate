@@ -45,11 +45,11 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public Optional<User> getUserId(Integer id) {
+    public User getUserId(Integer id) {
         if (users.get(id) == null) {
             throw new ObjectNotFoundException("id пользователя не найдено");
         }
-        return Optional.ofNullable(users.get(id));
+        return users.get(id);
     }
 
     private int generator() {

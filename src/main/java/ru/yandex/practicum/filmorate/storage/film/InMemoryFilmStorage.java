@@ -42,11 +42,11 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Optional<Film> getFilmId(Integer id) {
+    public Film getFilmId(Integer id) {
         if (films.get(id) == null) {
             throw new ObjectNotFoundException("id пользователя не найдено");
         }
-        return Optional.ofNullable(films.get(id));
+        return films.get(id);
     }
 
     @Override

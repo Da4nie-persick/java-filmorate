@@ -45,9 +45,8 @@ public class UserDbStorage implements UserStorage {
                 user.getId());
         if (updateUser == 1) {
             return user;
-        } else {
-            throw new ObjectNotFoundException("Проверьте данные");
         }
+        throw new ObjectNotFoundException("Проверьте данные");
     }
 
     @Override
@@ -57,15 +56,14 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public Optional<User> getUserId(Integer id) {
+    public User getUserId(Integer id) {
         String sqlQuery = "select * from users " +
                 "where user_id = ?";
-        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sqlQuery, id);
-        if (sqlRowSet.next()) {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUsers, id));
-        } else {
-            throw new ObjectNotFoundException("Пользователь не найден!");
+        List<User> user = jdbcTemplate.query(sqlQuery, this::mapRowToUsers, id);
+        if (user.size() == 1) {
+            return user.get(0);
         }
+        throw new ObjectNotFoundException("Пользователь не найден!");
     }
 
     public Map<String, Object> toMap(User user) {
