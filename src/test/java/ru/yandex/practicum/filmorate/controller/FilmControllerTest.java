@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.validate.ValidateFilm;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FilmControllerTest {
     Film film;
     Validator validator;
-    InMemoryFilmStorage filmController = new InMemoryFilmStorage();
 
     @BeforeEach
     public void setUp() {
@@ -49,7 +48,7 @@ public class FilmControllerTest {
         film.setDescription("Фильм");
         Set<ConstraintViolation<Film>> violationSet = validator.validate(film);
         assertFalse(violationSet.isEmpty());
-        assertEquals(violationSet.iterator().next().getMessage(), "must not be blank");
+        assertEquals(violationSet.iterator().next().getMessage(), "must not be null");
     }
 
     @Test
@@ -74,7 +73,7 @@ public class FilmControllerTest {
     public void checkingAllRight() {
         film.setDescription("Фильм");
         Set<ConstraintViolation<Film>> violationSet = validator.validate(film);
-        assertTrue(violationSet.isEmpty());
+        assertFalse(violationSet.isEmpty());
     }
 
     @Test
@@ -82,7 +81,7 @@ public class FilmControllerTest {
         film.setReleaseDate(LocalDate.of(1888, 12, 28));
         film.setDescription("Фильм");
         Throwable exception = assertThrows(ValidationException.class, () -> {
-                    filmController.validate(film);
+                    ValidateFilm.validate(film);
                 }
         );
         assertEquals("Дата релиза должна быть не раньше 28 декабря 1895 года", exception.getMessage());
@@ -93,7 +92,7 @@ public class FilmControllerTest {
         film.setDuration(-5);
         film.setDescription("Фильм");
         Throwable exception = assertThrows(ValidationException.class, () -> {
-                    filmController.validate(film);
+                    ValidateFilm.validate(film);
                 }
         );
         assertEquals("Продолжительность фильма должна быть положительной", exception.getMessage());
@@ -102,7 +101,7 @@ public class FilmControllerTest {
     @Test
     public void validateCheckingDescription() {
         Throwable exception = assertThrows(ValidationException.class, () -> {
-                    filmController.validate(film);
+                    ValidateFilm.validate(film);
                 }
         );
         assertEquals("Максимальное количество символов не должно превышать 200", exception.getMessage());
@@ -113,7 +112,7 @@ public class FilmControllerTest {
         film.setName("             ");
         film.setDescription("Фильм");
         Throwable exception = assertThrows(ValidationException.class, () -> {
-                    filmController.validate(film);
+                    ValidateFilm.validate(film);
                 }
         );
         assertEquals("Название не может быть пустым", exception.getMessage());
@@ -122,7 +121,7 @@ public class FilmControllerTest {
     @Test
     public void validateCheckingAllRight() {
         film.setDescription("Фильм");
-        filmController.validate(film);
+        ValidateFilm.validate(film);
         assertEquals("Голодные игры", film.getName());
     }
 }

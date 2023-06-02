@@ -9,7 +9,6 @@ import javax.validation.Valid;
 import java.util.*;
 
 @RestController
-@RequestMapping("/films")
 public class FilmController {
     private final FilmService filmService;
 
@@ -18,37 +17,37 @@ public class FilmController {
         this.filmService = filmService;
     }
 
-    @PostMapping
+    @PostMapping("/films")
     public Film create(@Valid @RequestBody Film film) {
         return filmService.create(film);
     }
 
-    @PutMapping
+    @PutMapping("/films")
     public Film update(@Valid @RequestBody Film film) {
         return filmService.update(film);
     }
 
-    @GetMapping
+    @GetMapping("/films")
     public Collection<Film> allFilms() {
         return filmService.allFilms();
     }
 
-    @PutMapping("/{id}/like/{userId}")
+    @PutMapping("/films/{id}/like/{userId}")
     public void putLike(@PathVariable Integer id, @PathVariable Integer userId) {
         filmService.putLike(id, userId);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/films/{id}")
     public Film getFilmId(@PathVariable Integer id) {
         return filmService.getFilmId(id);
     }
 
-    @DeleteMapping("/{id}/like/{userId}")
+    @DeleteMapping("/films/{id}/like/{userId}")
     public void deleteLike(@PathVariable Integer id, @PathVariable Integer userId) {
         filmService.deleteLike(id, userId);
     }
 
-    @GetMapping("/popular")
+    @GetMapping("/films/popular")
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") Integer count) {
         return filmService.getPopularFilms(count);
     }

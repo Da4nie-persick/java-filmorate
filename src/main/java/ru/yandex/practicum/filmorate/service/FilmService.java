@@ -1,45 +1,43 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.additions.LikeDbStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 public class FilmService {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
+    private final LikeDbStorage likeDbStorage;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+    public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage, @Qualifier("userDbStorage") UserStorage userStorage,
+                       LikeDbStorage likeDbStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
+        this.likeDbStorage = likeDbStorage;
     }
 
     public void putLike(Integer filmId, Integer userId) {
         userStorage.getUserId(userId);
-        Film film = getFilmId(filmId);
-        log.debug("Поставлен лайк на фильм: {}", film);
-        film.getLikes().add(userId);
+        getFilmId(filmId);
+        likeDbStorage.putLike(filmId, userId);
     }
 
     public void deleteLike(Integer filmId, Integer userId) {
         userStorage.getUserId(userId);
-        Film film = getFilmId(filmId);
-        log.debug("Удален лайк на фильм: {}", film);
-        film.getLikes().remove(userId);
+        getFilmId(filmId);
+        likeDbStorage.deleteLike(filmId, userId);
     }
 
     public List<Film> getPopularFilms(Integer count) {
-        log.debug("Текущее количество фильмов в топе: {}", count);
-        return allFilms().stream().sorted(Comparator.comparingInt((Film film) -> film.getLikes().size())
-                .reversed()).limit(count).collect(Collectors.toList());
+        return filmStorage.getPopularFilms(count);
     }
 
     public Film create(Film film) {

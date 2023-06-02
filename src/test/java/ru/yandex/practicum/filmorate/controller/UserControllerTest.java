@@ -2,9 +2,9 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.filmorate.validate.ValidateUser;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserControllerTest {
     User user;
     Validator validator;
-    InMemoryUserStorage userController = new InMemoryUserStorage();
 
     @BeforeEach
     public void setUp() {
@@ -71,7 +70,7 @@ public class UserControllerTest {
     public void validateCheckingInvalidEmail() {
         user.setEmail("gshjla!/.com");
         Throwable exception = assertThrows(ValidationException.class, () -> {
-                    userController.validate(user);
+                    ValidateUser.validate(user);
                 }
         );
         assertEquals("Электронная почта не может быть пустой и должна содержать символ @", exception.getMessage());
@@ -81,7 +80,7 @@ public class UserControllerTest {
     public void validateCheckingNullLogin() {
         user.setLogin(null);
         Throwable exception = assertThrows(ValidationException.class, () -> {
-                    userController.validate(user);
+                    ValidateUser.validate(user);
                 }
         );
         assertEquals("Логин не может быть пустым и содержать пробелы", exception.getMessage());
@@ -91,7 +90,7 @@ public class UserControllerTest {
     public void validateCheckingInvalidBirthday() {
         user.setBirthday(LocalDate.of(29878, 10, 19));
         Throwable exception = assertThrows(ValidationException.class, () -> {
-                    userController.validate(user);
+                    ValidateUser.validate(user);
                 }
         );
         assertEquals("Дата рождения не может быть в будущем", exception.getMessage());
@@ -99,7 +98,7 @@ public class UserControllerTest {
 
     @Test
     public void validateCheckingAllRight() {
-        userController.validate(user);
+        ValidateUser.validate(user);
         assertEquals("Dasha", user.getName());
     }
 }
